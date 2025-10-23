@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.time.Instant;
 import java.time.Duration;
+import java.lang.Math;
 
 public class TypingSpeedTest {
 
@@ -36,19 +37,32 @@ public class TypingSpeedTest {
 
         double wpm = (palavrasTotais / tempoEmSegundos) * 60.0;
 
-        boolean acertou = textoDigitadoPeloUsuario.equals(textoParaDigitar);
+        int erros = 0;
+        int lenOriginal = textoParaDigitar.length();
+        int lenDigitado = textoDigitadoPeloUsuario.length();
+        int lenComparacao = Math.min(lenOriginal, lenDigitado);
+
+        for (int i = 0; i < lenComparacao; i++) {
+            
+            if (textoParaDigitar.charAt(i) != textoDigitadoPeloUsuario.charAt(i)); {
+                erros++;
+            }
+
+        }
+
+        erros += Math.abs(lenOriginal - lenDigitado);
+
+        double precisao = Math.max(0.0, ((double) (lenOriginal - erros) / lenOriginal) * 100.0);
 
         System.out.println("\n==================================================================");
         System.out.println("          R E S U L T A D O S          ");
         System.out.println("==================================================================");
         System.out.printf("Tempo Total: %.2f segundos\n", tempoEmSegundos);
         System.out.printf("WPM (Palavras Por Minuto): %.2f\n", wpm);
+        
+        System.out.printf("Precisão: %.2f%%\n", precisao);
+        System.out.printf("Total de Erros: %d\n", erros);
 
-        if (acertou) {
-            System.out.println("Precisão: 100% (Texto digitado CORRETAMENTE!)");
-        } else {
-            System.out.println("Precisão: Erros detectados! O texto digitado não é idêntico.");
-        }
         System.out.println("==================================================================");
 
     }
