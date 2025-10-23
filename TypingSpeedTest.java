@@ -1,13 +1,25 @@
 import java.util.Scanner;
 import java.time.Instant;
 import java.time.Duration;
-import java.lang.Math;
+import java.util.Random;
 
 public class TypingSpeedTest {
 
     public static void main (String[] args) {
-        String textoParaDigitar = "A rápida raposa marrom saltou sobre o cão preguiçoso.";
+        String[] frases = {
+            "A rápida raposa marrom saltou sobre o cão preguiçoso.",
+            "O sol brilha intensamente no céu azul e claro.",
+            "Programar em Java pode ser desafiador, mas é muito recompensador.",
+            "A persistência é o caminho do êxito.",
+            "O único homem que nunca comete erros é aquele que nunca faz nada."
+        };
         
+        Random random = new Random();
+
+        int indiceAleatorio = random.nextInt(frases.length);
+
+        String textoParaDigitar = frases[indiceAleatorio];
+
         Scanner scanner = new Scanner(System.in);
 
 
@@ -27,7 +39,6 @@ public class TypingSpeedTest {
 
         Instant fim = Instant.now();
 
-        scanner.close();
 
         Duration duracao = Duration.between(inicio, fim);
 
@@ -40,6 +51,7 @@ public class TypingSpeedTest {
         int erros = 0;
         int lenOriginal = textoParaDigitar.length();
         int lenDigitado = textoDigitadoPeloUsuario.length();
+
         int lenComparacao = Math.min(lenOriginal, lenDigitado);
 
         for (int i = 0; i < lenComparacao; i++) {
