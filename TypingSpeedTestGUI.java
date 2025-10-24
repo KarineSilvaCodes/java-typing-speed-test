@@ -7,8 +7,13 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.util.Random;
 
-public class TypingSpeedTestGUI extends JFrame {
+
+
+public class TypingSpeedTestGUI extends JFrame implements ActionListener {
 
     JLabel labelFraseParaDigitar;
     JLabel labelResultadosWPM;
@@ -19,7 +24,17 @@ public class TypingSpeedTestGUI extends JFrame {
 
     JButton botaoIniciar;
     
-    String fraseDeTesteInicial = "A mãe é muito braba sendo GP.";
+    private String[] frases = {
+        "A rápida raposa marrom saltou sobre o cão preguiçoso.",
+        "O sol brilha intensamente no céu azul e claro.",
+        "Programar em Java pode ser desafiador, mas é muito recompensador.",
+        "A persistência é o caminho do êxito.",
+        "O único homem que nunca comete erros é aquele que nunca faz nada."
+    };
+
+    private Random random = new Random();
+
+    private String fraseAtual = "";
 
     public TypingSpeedTestGUI() {
 
@@ -28,7 +43,7 @@ public class TypingSpeedTestGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        labelFraseParaDigitar = new JLabel("<html><p style='padding: 5px;'>" + fraseDeTesteInicial + "</p></html>");
+        labelFraseParaDigitar = new JLabel("<html><p style='padding: 5px;'>Clique em 'Iniciar' para começar! </p></html>");
         labelFraseParaDigitar.setFont(new Font("Arial", Font.PLAIN, 18));
         add(labelFraseParaDigitar, BorderLayout.NORTH);
 
@@ -47,6 +62,8 @@ public class TypingSpeedTestGUI extends JFrame {
 
         botaoIniciar = new JButton("Iniciar Teste");
 
+        botaoIniciar.addActionListener(this);
+
         painelSul.add(botaoIniciar);
         painelSul.add(labelResultadosWPM);
         painelSul.add(labelResultadosPrecisao);
@@ -56,6 +73,32 @@ public class TypingSpeedTestGUI extends JFrame {
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == botaoIniciar) {
+
+            iniciarNovoTeste();
+        }
+    }
+
+    private void iniciarNovoTeste() {
+
+        int indiceAleatorio = random.nextInt(frases.length);
+        fraseAtual = frases[indiceAleatorio];
+
+        labelFraseParaDigitar.setText("<html><p style='paddinh: 5px; '>" + fraseAtual + "</p></html>");
+
+        botaoIniciar.setText("Reiniciar Teste");
+
+        labelResultadosWPM.setText("WPM: --");
+        labelResultadosPrecisao.setText("Precisão: --%");
+        labelResultadosErros.setText("Erros: --");
+
+        areaDeDigitacao.setText("");
+
+        areaDeDigitacao.requestFocusInWindow();
+    }
     public static void main(String[] args) {
         
         SwingUtilities.invokeLater(new Runnable() {
