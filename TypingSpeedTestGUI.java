@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.time.Instant;
 import java.time.Duration;
+import java.awt.Toolkit;
 import java.util.Random;
 
 
@@ -40,6 +41,9 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
     private boolean testePodeComecar = false;
     private boolean testeEmAndamento = false;
     private Instant inicio;
+
+    private int posicaoAtual;
+    private int totalErrosCometidos;
     
     public TypingSpeedTestGUI() {
 
@@ -48,7 +52,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        labelFraseParaDigitar = new JLabel("<html><p style='padding: 5px;'>Clique em 'Iniciar' para começar! </p></html>");
+        labelFraseParaDigitar = new JLabel("<html><p style='padding: 5px;'>Clique em 'Iniciar Teste' para começar! </p></html>");
         labelFraseParaDigitar.setFont(new Font("Arial", Font.PLAIN, 18));
         add(labelFraseParaDigitar, BorderLayout.NORTH);
 
@@ -75,7 +79,6 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         painelSul.add(labelResultadosErros);
 
         add(painelSul, BorderLayout.SOUTH);
-
     }
 
     @Override
@@ -100,21 +103,19 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         areaDeDigitacao.setEditable(true);
         testePodeComecar = true;
         testeEmAndamento = false;
+        
+        posicaoAtual = 0;
+        totalErrosCometidos = 0;
+
         areaDeDigitacao.requestFocusInWindow();
     }
 
     private void finalizarTeste() {
         Instant fim = Instant.now();
-        String textoDigitado = areaDeDigitacao.getText().trim();
-
+        
         testeEmAndamento = false;
         testePodeComecar = false;
         areaDeDigitacao.setEditable(false);
-
-        System.out.println("--- DEBUG INICIADO ---");
-        System.out.println("Frase Original: [" + fraseAtual + "]");
-        System.out.println("Texto Digitado: [" + textoDigitado + "]");
-        System.out.println("--- DEBUG FINALIZADO ---");
 
         Duration duracao = Duration.between(inicio, fim);
         double tempoEmSegundos = duracao.toMillis() / 1000.0;
@@ -123,42 +124,57 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
             tempoEmSegundos = 0.01;
         }
         
+        int lenOriginal = fraseAtual.length();
         int palavrasTotais = fraseAtual.split("\\s+").length;
         double wpm = (palavrasTotais / tempoEmSegundos) * 60.0;
 
-        int erros = 0;
-        int lenOriginal = fraseAtual.length();
-        int lenDigitado = textoDigitado.length();
-        int lenComparacao = Math.min(lenOriginal, lenDigitado);
-
-        for (int i = 0; i < lenComparacao; i++) {
-            if (fraseAtual.charAt(i) != textoDigitado.charAt(i)) {
-                erros++;
-            }
-        }
-        erros+= Math.abs(lenOriginal - lenDigitado);
-
-        double precisao = Math.max(0.0, ((double) (lenOriginal - erros) / lenOriginal) * 100.0);
+        double precisao = Math.max(0.0, ((double) (lenOriginal - totalErrosCometidos) / lenOriginal) *100.0);
 
         labelResultadosWPM.setText(String.format("WPM: %.2f", wpm));
         labelResultadosPrecisao.setText(String.format("Precisão: %.2f%%", precisao));
-        labelResultadosErros.setText(String.format("Erros: %d", erros));
+        labelResultadosErros.setText(String.format("Erros: %d", totalErrosCometidos));
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (testePodeComecar && !testeEmAndamento) {
+
+        if (!testePodeComecar) {
+            e.consume();
+            return;
+        }
+
+        if (!testeEmAndamento) {
             inicio = Instant.now();
             testeEmAndamento = true;
+        }
+
+        char charDigitado = e.getKeyChar();
+        char charEsperado = fraseAtual.charAt(posicaoAtual);
+
+        if (charDigitado != charEsperado) {
+            e.consume();
+            totalErrosCometidos++;
+            Toolkit.getDefaultToolkit().beep();
+        } else {
+            posicaoAtual++;
+        }
+
+        if ( posicaoAtual == fraseAtual.length()) {
+            finalizarTeste();
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             e.consume();
-            if (testeEmAndamento) {
-                finalizarTeste();
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            e.consume();
+            if (testePodeComecar) {
+                Toolkit.getDefaultToolkit().beep();
             }
         }
     }
