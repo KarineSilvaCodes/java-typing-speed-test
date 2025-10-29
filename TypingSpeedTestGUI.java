@@ -60,7 +60,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         setLayout(new BorderLayout(10, 10));
 
         labelFraseParaDigitar = new JLabel("<html><p style='padding: 5px;'>Clique em 'Iniciar Teste' para começar! </p></html>");
-        labelFraseParaDigitar.setFont(new Font("Arial", Font.PLAIN, 18));
+        labelFraseParaDigitar.setFont(new Font("Monospaced", Font.PLAIN, 18));
         add(labelFraseParaDigitar, BorderLayout.NORTH);
 
         areaDeDigitacao = new JTextArea();
@@ -94,11 +94,11 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
                 contagemRegressiva--;
 
                 if (contagemRegressiva == 2) {
-                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 2</p></html>");
+                    labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px;'>Preparar... 2</p></html>");
                 } else if (contagemRegressiva == 1) {
-                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 1</p></html>");
+                    labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px;'>Preparar... 1</p></html>");
                 } else if (contagemRegressiva == 0) {
-                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>VAI!</p></html>");
+                    labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px;'>VAI!</p></html>");
                 } else {
                     timerContagem.stop();
                     botaoIniciar.setEnabled(true);
@@ -126,7 +126,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         labelResultadosErros.setText("erros: --");
 
         contagemRegressiva = 3; 
-        labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 3</p></html>");
+        labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px;'>Preparar... 3</p></html>");
 
         timerContagem.start();
 
@@ -137,7 +137,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         int indiceAleatorio = random.nextInt(frases.length);
         fraseAtual = frases[indiceAleatorio];
 
-        labelFraseParaDigitar.setText("<html><p style='padding: 5px; '>" + fraseAtual + "</p></html>");
+        labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px; '>" + fraseAtual + "</p></html>");
         botaoIniciar.setText("Reiniciar Teste");
 
         areaDeDigitacao.setText("");
