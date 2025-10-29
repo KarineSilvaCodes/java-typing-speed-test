@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.Duration;
 import java.awt.Toolkit;
 import java.util.Random;
-
+import javax.swing.UIManager;
 
 
 public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyListener {
@@ -185,12 +185,20 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         // não será utilizado, mas é obrigatório ter.
     }
     public static void main(String[] args) {
+
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            System.out.println("Aviso: Look and Feel Nimbus não encontrado. Usando o padrão.");
+        }
         
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
             
                 TypingSpeedTestGUI janela = new TypingSpeedTestGUI();
+
+                janela.setLocationRelativeTo(null);
                 janela.setVisible(true);
             }
         });
