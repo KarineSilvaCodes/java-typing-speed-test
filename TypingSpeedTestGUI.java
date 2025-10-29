@@ -134,21 +134,21 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
 
     private void iniciarNovoTeste() {
 
+        posicaoAtual = 0;
+        totalErrosCometidos = 0;
+
         int indiceAleatorio = random.nextInt(frases.length);
         fraseAtual = frases[indiceAleatorio];
 
-        labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px; '>" + fraseAtual + "</p></html>");
+        atualizarDestaqueFrase();
         botaoIniciar.setText("Reiniciar Teste");
 
-        areaDeDigitacao.setText("");
-        
+        areaDeDigitacao.setText(""); 
         areaDeDigitacao.setEditable(true);
         areaDeDigitacao.setBackground(new Color(240, 255, 240));
 
         testePodeComecar = true;
         testeEmAndamento = false; 
-        posicaoAtual = 0;
-        totalErrosCometidos = 0;
 
         areaDeDigitacao.requestFocusInWindow();
     }
@@ -160,6 +160,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         testePodeComecar = false;
         areaDeDigitacao.setEditable(false);
         areaDeDigitacao.setBackground(this.corOriginalAreaDigitacao);
+        labelFraseParaDigitar.setText("<html><p style='font-family: Monospaced; padding: 5px;'>" + fraseAtual + "</p></html>");
 
         Duration duracao = Duration.between(inicio, fim);
         double tempoEmSegundos = duracao.toMillis() / 1000.0;
@@ -205,6 +206,8 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
 
         if ( posicaoAtual == fraseAtual.length()) {
             finalizarTeste();
+        } else {
+            atualizarDestaqueFrase();
         }
     }
 
@@ -246,5 +249,21 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
                 janela.setVisible(true);
             }
         });
+    }
+
+    private void atualizarDestaqueFrase() {
+
+        String textoAntes = fraseAtual.substring(0, posicaoAtual);
+        String charAtivo = String.valueOf(fraseAtual.charAt(posicaoAtual));
+        String textoDepois = fraseAtual.substring(posicaoAtual + 1);
+        
+        String html = "<html><p style='font-family: Monospaced; padding: 5px;'>" + textoAntes;
+        
+        html += "<span style='background-color: #FFFF99;'>" + charAtivo + "</span>";
+        
+        html += textoDepois + "</p></html>";
+        
+        // 3. Define o texto final no rótulo
+        labelFraseParaDigitar.setText(html);
     }
 }
