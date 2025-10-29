@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.awt.Toolkit;
 import java.util.Random;
 import javax.swing.UIManager;
+import java.awt.Color;
 
 
 public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyListener {
@@ -45,6 +46,8 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
     private int posicaoAtual;
     private int totalErrosCometidos;
     
+    private Color corOriginalAreaDigitacao;
+    
     public TypingSpeedTestGUI() {
 
         setTitle("Teste de Velocidade de Digitação (Swing)");
@@ -61,6 +64,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         areaDeDigitacao.setLineWrap(true);
         areaDeDigitacao.setWrapStyleWord(true);
         areaDeDigitacao.addKeyListener(this);
+        this.corOriginalAreaDigitacao = areaDeDigitacao.getBackground();
         add(areaDeDigitacao, BorderLayout.CENTER);
 
         JPanel painelSul = new JPanel();
@@ -107,6 +111,8 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         posicaoAtual = 0;
         totalErrosCometidos = 0;
 
+        areaDeDigitacao.setBackground(new Color(240, 255, 240));
+
         areaDeDigitacao.requestFocusInWindow();
     }
 
@@ -116,6 +122,7 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         testeEmAndamento = false;
         testePodeComecar = false;
         areaDeDigitacao.setEditable(false);
+        areaDeDigitacao.setBackground(this.corOriginalAreaDigitacao);
 
         Duration duracao = Duration.between(inicio, fim);
         double tempoEmSegundos = duracao.toMillis() / 1000.0;
