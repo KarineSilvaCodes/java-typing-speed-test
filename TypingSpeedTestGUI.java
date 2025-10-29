@@ -17,6 +17,7 @@ import java.awt.Toolkit;
 import java.util.Random;
 import javax.swing.UIManager;
 import java.awt.Color;
+import javax.swing.Timer;
 
 
 public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyListener {
@@ -45,8 +46,11 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
 
     private int posicaoAtual;
     private int totalErrosCometidos;
-    
     private Color corOriginalAreaDigitacao;
+    private Timer timerContagem;
+    private int contagemRegressiva;
+
+
     
     public TypingSpeedTestGUI() {
 
@@ -83,35 +87,68 @@ public class TypingSpeedTestGUI extends JFrame implements ActionListener, KeyLis
         painelSul.add(labelResultadosErros);
 
         add(painelSul, BorderLayout.SOUTH);
+
+        ActionListener acaoDoTimer = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                contagemRegressiva--;
+
+                if (contagemRegressiva == 2) {
+                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 2</p></html>");
+                } else if (contagemRegressiva == 1) {
+                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 1</p></html>");
+                } else if (contagemRegressiva == 0) {
+                    labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>VAI!</p></html>");
+                } else {
+                    timerContagem.stop();
+                    botaoIniciar.setEnabled(true);
+                    iniciarNovoTeste();
+                }
+            }
+        };
+
+        timerContagem = new Timer(1000, acaoDoTimer);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botaoIniciar) {
-            iniciarNovoTeste();
+            iniciarContagemRegressiva();
         }
     }
 
+    private void iniciarContagemRegressiva() {
+        botaoIniciar.setEnabled(false);
+        areaDeDigitacao.setEditable(false);
+        areaDeDigitacao.setBackground(this.corOriginalAreaDigitacao);
+        labelResultadosWPM.setText("WPM: --");
+        labelResultadosPrecisao.setText("Precisão: --%");
+        labelResultadosErros.setText("erros: --");
+
+        contagemRegressiva = 3; 
+        labelFraseParaDigitar.setText("<html><p style='padding: 5px;'>Preparar... 3</p></html>");
+
+        timerContagem.start();
+
+    }
+
     private void iniciarNovoTeste() {
+
         int indiceAleatorio = random.nextInt(frases.length);
         fraseAtual = frases[indiceAleatorio];
 
         labelFraseParaDigitar.setText("<html><p style='padding: 5px; '>" + fraseAtual + "</p></html>");
         botaoIniciar.setText("Reiniciar Teste");
 
-        labelResultadosWPM.setText("WPM: --");
-        labelResultadosPrecisao.setText("Precisão: --%");
-        labelResultadosErros.setText("Erros: --");
-
         areaDeDigitacao.setText("");
-        areaDeDigitacao.setEditable(true);
-        testePodeComecar = true;
-        testeEmAndamento = false;
         
+        areaDeDigitacao.setEditable(true);
+        areaDeDigitacao.setBackground(new Color(240, 255, 240));
+
+        testePodeComecar = true;
+        testeEmAndamento = false; 
         posicaoAtual = 0;
         totalErrosCometidos = 0;
-
-        areaDeDigitacao.setBackground(new Color(240, 255, 240));
 
         areaDeDigitacao.requestFocusInWindow();
     }
